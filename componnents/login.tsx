@@ -1,18 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { FC, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View,Image, TextInput, TouchableOpacity } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { isEmailValid } from '../utils/validators';
+import { AuthContext } from '../context/AuthContext';
+import Register from './register';
 
-const Login : FC = ()=> {
+const EMAIL = "email";
+const PASSWORD = "password";
+
+type iField = "email" | "password"
+type iErrMsg = { field: iField | "", msg: string };
+type iFormData = { email: string, password: string };
+
+const Login : FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  //const {test} = useContext(AuthContext)
   return (
     <View>
-      <Image source ={require('./assets/postbox.png')} style={styles.logo}></Image>
       <Text style={styles.login}>Login</Text>
+      <Image source ={require('../assets/logoIcon.png')} style={styles.logo}></Image>
+      
       <TextInput
         style={styles.input}
-        onChangeText={setEmail}
         value={email}
+        onChangeText={setEmail}
         placeholder={'Email: '}
       />
       <TextInput
@@ -26,7 +39,9 @@ const Login : FC = ()=> {
           <Text style={styles.btnText}>LOGIN</Text>
         </TouchableOpacity>
       </View>
-
+      <TouchableOpacity onPress={()=> navigation.navigate('Register')}>
+        <Text style={styles.transferToRegister}>New to the app? Register</Text>
+      </TouchableOpacity>
       <View style={styles.lineStyle}>
         <View style={{flex:1, height:1, backgroundColor: '#EF86C1'}}/>
         <View>
@@ -46,11 +61,14 @@ const styles = StyleSheet.create({
     height:200,
     resizeMode:"contain",
     alignSelf: "center",
+    borderRadius:30,
   },
   login:{
-    fontSize:35,
+    fontSize:30,
     alignSelf: "center",
     fontWeight: 'bold',
+    color: '#EF86C1',
+    marginBottom:10,
   },
   buttonsContainer: {
     flexDirection: 'row'
@@ -81,6 +99,12 @@ const styles = StyleSheet.create({
      marginLeft: 15,
      marginRight: 15,
      alignItems: "center",
+  },
+  transferToRegister: {
+    alignSelf: 'center',
+    fontSize: 15,
+    marginBottom: 5,
+    marginTop: 5,
   },
 });
 
