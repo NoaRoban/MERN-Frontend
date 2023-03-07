@@ -85,7 +85,6 @@ const App: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
         <Stack.Navigator initialRouteName="HomeActivity" screenOptions={{headerLeft: () => <ActionBarImage />}} >
           <Stack.Screen name="Home" component={Home}  options={{ headerTintColor: '#fff'}}/>
           <Stack.Screen name="Login" component={Login} options={{ headerTintColor: '#fff'}}/>
-          <Stack.Screen name="Register" component={Register} options={{ headerTintColor: '#fff'}}/>
         </Stack.Navigator>
       </NavigationContainer>
   );
