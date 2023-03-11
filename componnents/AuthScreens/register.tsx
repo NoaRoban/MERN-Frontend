@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {FontAwesome5} from '@expo/vector-icons'
 import { Input, NativeBaseProvider, Button, Box, AspectRatio } from 'native-base';
 import { UserOutlined } from '@ant-design/icons';
+import GoogleSignInButton from './GoogleAuth';
 /***import {
   GoogleSignin,
   GoogleSigninButton,
@@ -17,10 +18,9 @@ import Spinner from 'react-native-loading-spinner-overlay'
 import Login from './login'
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { iCurrentScreen } from './HomeScreen';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '../context/AuthContext';
-import { isEmailValid } from '../utils/validators';
+import { AuthContext } from '../../context/AuthContext';
+import { isEmailValid } from '../../utils/validators';
 WebBrowser.maybeCompleteAuthSession();
 
 /*const [request, response, promptAsync] = Google.useAuthRequest({
@@ -37,20 +37,11 @@ type iField = "email" | "password" | "name";
 type iErrMsg = { field: iField | "", msg: string };
 type iFormData = { email: string, password: string, name: string };
 
-interface Props {
-    setScreen: (newScreen: iCurrentScreen) => void;
-}
-
-
-const Register : FC<{ route: any, navigation: any,setScreen: Props}> = ({ route, navigation,setScreen: Props  }) => {
-  /*const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isRegistered, setIsRegistered] = useState(false)*/
-
+const Register : FC<{ route: any, navigation: any}> = ({ route, navigation  }) => {
+  
   const { register, handleSubmit, setValue } = useForm<iFormData>({
     mode: "onChange",
-    defaultValues: { email: "noa123@gmail.com", password: "123456", name: "Noa" }
+    defaultValues: { email: "", password: "", name: "" }
   });
 
   const { isLoading, register: registerUser } = useContext(AuthContext);
@@ -60,6 +51,12 @@ const Register : FC<{ route: any, navigation: any,setScreen: Props}> = ({ route,
   const onSubmit = useCallback(async (formData: iFormData) => {
     const { email, password, name } = formData;
 
+    if (!email && !name && !name) {
+      setErrMsg({ field: EMAIL, msg: "Required field" });
+      setErrMsg({ field: NAME, msg: "Required field" });
+      setErrMsg({ field: PASSWORD, msg: "Required field" });
+      return;
+    }
     if (!email) {
         setErrMsg({ field: EMAIL, msg: "Required field" });
         return;
@@ -108,8 +105,8 @@ return (
   <View>
     <Spinner visible={isLoading} />
     <Text style={styles.signup}>Signup</Text>
-    <Image source ={require('../assets/logoIcon.png')} style={styles.logo}></Image>
-      
+    <Image source ={require('../../assets/logoIcon.png')} style={styles.logo}></Image>
+ 
     <TextInput
       style={[styles.input,{ borderColor: errMsg.field === NAME ? "red" : '#111' } ]}
       onChangeText={onChangeField('name')}
@@ -123,8 +120,6 @@ return (
       placeholder={'Email'}
       keyboardType="email-address"
       textContentType="emailAddress"
-      
-
     />
      <TextInput
       secureTextEntry
@@ -133,7 +128,11 @@ return (
       placeholder={'Password'}
       autoComplete="password"
     />
-
+   {errMsg.msg &&
+      <Text style={{ color: 'red', marginLeft:10, fontWeight: 'bold' }} >
+          {errMsg.msg}
+      </Text>
+    }
     <View style={styles.buttonsContainer}>
       <TouchableOpacity style={styles.btn} onPress={handleSubmit(onSubmit)} disabled={isLoading}>
         <Text style={styles.btnText}>REGISTER NOW</Text>
@@ -143,11 +142,7 @@ return (
     <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
       <Text style={styles.transferToLogin}>Already have account? Login</Text>
     </TouchableOpacity>
-    {errMsg.msg &&
-      <Text style={{ color: 'red' }} >
-          {errMsg.msg}
-      </Text>
-    }
+
     <View style={styles.lineStyle}>
       <View style={{flex:1, height:1, backgroundColor: '#EF86C1'}}/>
         <View>
@@ -155,6 +150,8 @@ return (
         </View>
       <View style={{flex:1, height:1, backgroundColor: '#EF86C1'}}/>
       </View>
+      <GoogleSignInButton disabled={isLoading} />
+
   </View>
   );
 }

@@ -1,17 +1,18 @@
-import { useState, FC, useEffect } from 'react';
+import { useState, FC, useEffect,useContext } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert, TextInput, ScrollView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import StudentModel, { Student } from '../model/StudentModel';
+import PostModel, { Post } from '../../model/PostModel';
 import * as ImagePicker from 'expo-image-picker';
+import { AuthContext } from '../../context/AuthContext';
+import userApi from '../../api/UserApi';
 
 
-const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
-    console.log("My app is running")
-    const [id, setId] = useState("")
-    const [name, setName] = useState("")
-    const [address, setAddress] = useState("")
-    const [avatarUri, setAvatarUri] = useState("")
+const PostAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
+    const [_id, set_Id] = useState("")
+    const [text, setText] = useState("")
+    const userId = useContext(AuthContext)
+    const [imageUrl, setImageUrl] = useState("")
 
     const askPermission = async () => {
         try {
@@ -33,7 +34,7 @@ const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) 
             if (!res.canceled && res.assets.length > 0) {
                 const uri = res.assets[0].uri
                 //console.log('the URI ========'+uri)
-                setAvatarUri(uri)
+                setImageUrl(uri)
             }
 
         } catch (err) {
@@ -46,7 +47,7 @@ const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) 
             const res = await ImagePicker.launchImageLibraryAsync()
             if (!res.canceled && res.assets.length > 0) {
                 const uri = res.assets[0].uri
-                setAvatarUri(uri)
+                setImageUrl(uri)
             }
 
         } catch (err) {
@@ -56,22 +57,23 @@ const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) 
 
     const onSaveCallback = async () => {
         console.log("save button was pressed")
-        const student: Student = {
-            id: id,
-            name: name,
-            image: "url",
+        const id = userId.userInfo.id.toString()
+        const post: Post = {
+            text: text,
+            userId: id,
+            imageUrl: "imageUrl",
         }
         try {
-            if (avatarUri != "") {
+            if (imageUrl != "") {
                 //console.log("uploading image" + avatarUri)
-                const url = await StudentModel.uploadImage(avatarUri)
-                student.image = url
+                const url = await PostModel.uploadImage(imageUrl)
+                post.imageUrl = url
                 //console.log("got url from upload: " + url)
             }
-            console.log("saving student")
-            await StudentModel.addStudent(student)
+            console.log("saving post")
+            await PostModel.addNewPost(post)
         } catch (err) {
-            console.log("fail adding studnet: " + err)
+            console.log("fail adding post: " + err)
         }
         navigation.goBack()
     }
@@ -83,8 +85,8 @@ const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) 
         <ScrollView>
             <View style={styles.container}>
                 <View>
-                    {avatarUri == "" && <Image source={require('../assets/ava.png')} style={styles.avatar}></Image>}
-                    {avatarUri != "" && <Image source={{ uri: avatarUri }} style={styles.avatar}></Image>}
+                    {imageUrl == "" && <Image source={require('../../assets/ava.png')} style={styles.avatar}></Image>}
+                    {imageUrl != "" && <Image source={{ uri: imageUrl }} style={styles.avatar}></Image>}
 
                     <TouchableOpacity onPress={openCamera} >
                         <Ionicons name={'camera'} style={styles.cameraButton} size={50} />
@@ -96,21 +98,9 @@ const StudentAdd: FC<{ route: any, navigation: any }> = ({ route, navigation }) 
 
                 <TextInput
                     style={styles.input}
-                    onChangeText={setId}
-                    value={id}
-                    placeholder={'Student ID'}
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setName}
-                    value={name}
-                    placeholder={'Student Name'}
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setAddress}
-                    value={address}
-                    placeholder={'Student Address'}
+                    onChangeText={setText}
+                    value={text}
+                    placeholder={'Post Message'}
                 />
                 <View style={styles.buttonesContainer}>
                     <TouchableOpacity onPress={onCancellCallback} style={styles.button}>
@@ -173,4 +163,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default StudentAdd
+export default PostAdd

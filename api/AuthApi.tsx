@@ -17,6 +17,7 @@ interface iSigin {
 }
 const signInUser = async (data: iSigin) => {
     const { email, password } = data;
+    console.log("email: "+ email)
     return apiClient.post(`/${URL_PATHS.auth}/login`, { email, password });
 }
 
@@ -40,8 +41,8 @@ const fetchUserInfo = async (accessToken: string) => {
             'Content-Type': 'application/json'
         },
     });
-
-    return await response.json();
+    const userInfo = await response.json()
+    return userInfo
 }
 
 export interface iGoogleSign {

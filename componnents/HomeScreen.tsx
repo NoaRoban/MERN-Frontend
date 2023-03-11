@@ -1,23 +1,21 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import * as Google from 'expo-auth-session/providers/google';
-//import GoogleSignInButton from '../componnents/GoogleSignIn';
-import Login from './login';
-import Register from './register';
-//import ForgetPasswordScreen from '../componnents/';
+import Login from './AuthScreens/login';
+import Register from './AuthScreens/register';
 import {NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, Image, ActivityIndicatorBase, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
 import ActionBarImage from './ActionBarImage'
 import Navigation from './Navigation';
 import { AuthContext } from '../context/AuthContext';
+import { createDrawerNavigator, DrawerContent } from '@react-navigation/drawer';
+
+
 
 const LOGIN = "LOGIN";
 const REGISTER = "REGISTER";
 const FORGET_PASSWORD = "FORGET_PASSWORD";
 
-export type iCurrentScreen = "LOGIN" | "REGISTER" | "FORGET_PASSWORD";
 const Stack = createNativeStackNavigator();
 
 export const Home: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
@@ -48,43 +46,19 @@ export const Home: FC<{ route: any, navigation: any }> = ({ route, navigation })
   ); 
 }
 
+//const Drawer = createDrawerNavigator();
+
 const App: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [userToken, setUserToken] = useState(null)
 
-  /*const authContext = useMemo(() => ({
-    login:() => {
-      //setUserToken(UserInfo.accessToken | null)
-      setIsLoading(false)
-    },
-    signOut: ()=> {
-      //setUserToken(null)
-      setIsLoading(false)
-    },
-    signUp: ()=> {
-      //setUserToken('vfvvf')
-      setIsLoading(false)
-    },
-  }), undefined);*/
-
-  /*useEffect(()=>{
-    setTimeout(()=>{
-      setIsLoading(false)
-    },1000)
-  }, [])*/
-
-  /*if(isLoading){
-    return(
-      <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
-        <ActivityIndicator size="large"/>
-      </View>
-    )
-  }*/
+ 
   return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="HomeActivity" screenOptions={{headerLeft: () => <ActionBarImage />}} >
           <Stack.Screen name="Home" component={Home}  options={{ headerTintColor: '#fff'}}/>
           <Stack.Screen name="Login" component={Login} options={{ headerTintColor: '#fff'}}/>
+          <Stack.Screen name="Register" component={Register} options={{ headerTintColor: '#fff'}}/>
         </Stack.Navigator>
       </NavigationContainer>
   );

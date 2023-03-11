@@ -10,12 +10,12 @@ export type Student = {
 }
 
 const getAllStudents = async () => {
-    console.log("getAllStudents()")
+    //console.log("getAllStudents()")
     const res: any = await StudentApi.getAllStudents()
     let data = Array<Student>()
     if (res.data) {
         res.data.forEach((obj: any) => {
-            console.log("element: " + obj._id)
+            //console.log("element: " + obj._id)
             const st: Student = {
                 name: obj.name,
                 id: obj._id,
@@ -28,7 +28,7 @@ const getAllStudents = async () => {
 }
 
 const addStudent = async (student: Student) => {
-    console.log("~~~~~~~~addStudent~~~~~~")
+    //console.log("~~~~~~~~addStudent~~~~~~")
     const data = {
         _id: student.id,
         name: student.name,

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiResponse } from 'apisauce';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import authApi from '../api/AuthApi';
@@ -18,28 +19,30 @@ type UserInfo = {
 type AuthContextType = {
     isLoading: boolean;
     userInfo: UserInfo;
-    //splashLoading: boolean;
+    splashLoading: boolean;
     register: (email: string, password: string, name: string) => Promise<true | string> | null;
-    /*login: (email: string, password: string) => Promise<true | string> | null;
+    login: (email: string, password: string) => Promise<true | string> | null;
     logout: () => void;
     toggleLoading: () => void;
     editUserInfo: (userId: string, data: iEditUser) => void;
     getUserInfo: (id: string) => void;
     googleSignin: (accessToken: string) => Promise<boolean> | null;
-    userData?: User;*/
+    userData?: User;
+    isLoggedIn: () => void;
 };
 
 export const AuthContext = createContext<AuthContextType>({
     isLoading: false,
     userInfo: { accessToken: '', refreshToken: '', id: '' },
-    //splashLoading: false,
+    splashLoading: false,
     register: (email: string, password: string, name: string) => null,
-    /*login: (email: string, password: string) => null,
+    login: (email: string, password: string) => null,
     googleSignin: () => null,
     editUserInfo: () => null,
     getUserInfo: () => null,
     logout: () => { },
-    toggleLoading: () => { }*/
+    toggleLoading: () => { },
+    isLoggedIn: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -47,28 +50,29 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    //const [splashLoading, setSplashLoading] = useState<boolean>(false)
+    const [splashLoading, setSplashLoading] = useState<boolean>(false)
 
     const [userData, setUserData] = useState<User>()
-
+    const [userId, setUserId] = useState('')
     const register = async (email: string, password: string, name: string): Promise<true | string> => {
         setIsLoading(true);
         const res = await authApi.signUpUser({ email, password, name })
-
         const data: any = res?.data;
         if (data?.err) {
             setIsLoading(false);
             return data.err as string;
         }
-
+        console.log('the user ID:' + data._id)
+        setUserId(data._id)
         setIsLoading(false);
         return true;
     };
 
-    /*const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string) => {
         setIsLoading(true);
-        const res = await authApi.signInUser({ email, password });
+        console.log('isLoading ' + isLoading)
 
+        const res = await authApi.signInUser({ email, password });
         const data: UserInfo | any = res.data;
 
         if (data.err) {
@@ -76,6 +80,7 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
             return data.err as string;
         }
+        //console.log('the user ID:' + data.id)
 
         await createUserSession(data);
 
@@ -113,15 +118,18 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
         setIsLoading(false);
         setUserInfo({ accessToken: '', refreshToken: '', id: '' });
-    };
+    }
 
-    /*const isLoggedIn = async () => {
+    const isLoggedIn = async () => {
         try {
             setSplashLoading(true);
-
-            let userInfo: any = await AsyncStorage.getItem('userInfo');
+            console.log('isssssssssssssssssssssssss login')
+    
+            let userInfo: any = await AsyncStorage.getItem('userInfo')
+            
+            console.log(' ~~~~~~~~~~~~~~the user info~~~~~~~~~~~ '+userInfo.id)
             userInfo = JSON.parse(userInfo);
-
+            console.log(' ~~~~~~~~~~~~~~the user info~~~~~~~~~~~ '+userInfo.accessToken)
             if (userInfo) {
                 setUserInfo(userInfo);
                 apiClient.setHeader('Authorization', `Bearer ${userInfo.accessToken}`)
@@ -131,47 +139,70 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
         } catch (e) {
             setSplashLoading(false);
         }
-    };*/
+    };
 
-    //const toggleLoading = (val?: boolean) => setIsLoading(prevState => val || !prevState);
+    const toggleLoading = (val?: boolean) => setIsLoading(prevState => val || !prevState);
 
-    /*const editUserInfo = async (userId: string, data: iEditUser) => {
+    const editUserInfo = async (userId: string, data: iEditUser) => {
         await userApi.editUserInfo(userId, data);
         getUserInfo(userId);
-    }*/
+    }
 
-    /*const getUserInfo = async (userId: string) => {
+    const getUserInfo = async (userId: string) => {
         const res = await userApi.getUser(userId)
+        console.log(' the user info~~~~~~~~~~~ '+userInfo.id)
+
         setUserData(res.data as User);
-    }*/
+    }
 
-    /*const createUserSession = async (data: UserInfo) => {
-        const [userRes] = await Promise.all([userApi.getUser(data.id), AsyncStorage.setItem(ACCESS_TOKEN, data.accessToken), AsyncStorage.setItem(REFRESH_TOKEN, data.refreshToken)])
-        const userData = userRes.data;
-        setUserData(userData as User);
-        setUserInfo(data);
+    const createUserSession = async (data: UserInfo) => {
+        try{
+            const id =userApi.getUser(data.id)
+            let storedObject = {'id':id, 'accessToken': data.accessToken,'refreshToken': data.refreshToken};
+            setUserId(data.id)
+            console.log('uuuuuuuuuuuuser' + userId)
+            const userRes1 = await AsyncStorage.setItem('userInfo', JSON.stringify(storedObject));
+            //const [userRes] = await Promise.all([userApi.getUser(data.id), AsyncStorage.setItem(ACCESS_TOKEN, data.accessToken), AsyncStorage.setItem(REFRESH_TOKEN, data.refreshToken)])
+            //const userData = userRes.data;
+            //setUserData(userData as User);
+            setUserInfo(data);
+    
+            console.log('userRes.data ~~~~~~~~~~~~~~~~~~~~~~' + data.id)
+            apiClient.setHeader('Authorization', `Bearer ${storedObject.accessToken}`)
+        }catch(err){
+            console.log('Failed to save the data to the storage')
+        }
+    }
 
-        apiClient.setHeader('Authorization', `Bearer ${data.accessToken}`)
+    const getUserId = async (data: UserInfo) => {
+        try{
+            let userId = userApi.getUser(data.id)
+            //setUserId(data.id)
+            return userId
+        }catch(err){
+            console.log('Failed to save the data to the storage')
+        }
     }
 
     useEffect(() => {
         isLoggedIn();
-    }, []);*/
+    }, []);
 
     return (
         <AuthContext.Provider
             value={{
                 isLoading,
                 userInfo,
-                //splashLoading,
+                splashLoading,
                 register,
-                //login,
-                //logout,
-                //getUserInfo,
-                //googleSignin,
-                //userData,
-                //editUserInfo,
-                //toggleLoading
+                login,
+                logout,
+                getUserInfo,
+                googleSignin,
+                userData,
+                editUserInfo,
+                toggleLoading,
+                isLoggedIn,
             }}
         >
             {children}
