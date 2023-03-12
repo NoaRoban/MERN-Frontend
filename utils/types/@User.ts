@@ -1,13 +1,13 @@
 import { Post } from "./@Post";
 
 export interface User {
-    avatarUrl: string;
+    imageUrl: string;
     email: string;
     name: string;
     posts: Post[];
 }
 
 export interface iEditUser {
-    avatarUrl?: string;
+    imageUrl?: string;
     name?: string;
 }

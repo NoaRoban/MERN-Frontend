@@ -11,19 +11,23 @@ const getUser = async (userId: string) => {
 };
 
 const editUserInfo = async (userId: string, userData: iEditUser) => {
-    console.log("user id in editUserInfo" +userId)
-    console.log("user data in edit user info" +userData)
+    console.log("user id in editUserInfo   " +userId)
+    console.log("user data in edit user info   " +userData.imageUrl)
     return apiClient.post(`/${URL_PATHS.user}/edit-user/${userId}`, userData);
 };
 
-const uploadUserImage = async (image: FormData) => {
-    return apiClient.post(`/${URL_PATHS.file}/file`, image);
+const uploadUserImage = async (imageURI: any)=> {
+    console.log('~~~~~~~~~~ upload image---------')
+    return apiClient.post("/file/file", imageURI);
+
 };
+
+
 
 const userApi = {
     getUser,
     editUserInfo,
-    uploadUserImage
+    uploadUserImage,
 };
 
 export default userApi;

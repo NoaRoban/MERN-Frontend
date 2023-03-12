@@ -11,7 +11,7 @@ import PostAdd from '../Post/PostAdd';
 import PostList from '../Post/PostList'
 import NavigationIndex from '../Index'
 import { AuthContext } from '../../context/AuthContext';
-
+import PersonalDetails from '../PersonalDetails';
 
 const InfoScreen: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
   return (
@@ -54,7 +54,7 @@ const PostStackCp: FC<{ route: any, navigation: any }> = ({ route, navigation })
         ),
       }
       } />
-      <PostStack.Screen name="StudentDetails" component={StudentDetails} />
+      <PostStack.Screen name="PersonalDetails" component={PersonalDetails} />
       <PostStack.Screen name="PostAdd" component={PostAdd} />
     </PostStack.Navigator>
   );
@@ -82,7 +82,7 @@ const App: FC = () => {
         tabBarInactiveTintColor: 'gray',
       })}>
         <Tab.Screen name="PostStackCp" component={PostStackCp} options={{ headerShown: false }} />
-        <Tab.Screen name="StudentInfo" component={StudentDetails} options={{ headerShown: false }} />
+        <Tab.Screen name="My Profile" component={PersonalDetails} options={{ headerShown: false }} />
 
       </Tab.Navigator>
 

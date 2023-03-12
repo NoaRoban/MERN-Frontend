@@ -151,11 +151,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     button: {
-        flex: 1,
-        margin: 12,
-        padding: 12,
-        backgroundColor: 'blue',
-        borderRadius: 10,
+            flex: 1,
+            margin: 12,
+            padding: 12,
+            backgroundColor: '#EF86C1',
+            borderRadius: 10,
     },
     buttonText: {
         textAlign: 'center',

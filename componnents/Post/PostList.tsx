@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useContext } from 'react';
 import { StatusBar, StyleSheet, Text, View, Image, TouchableOpacity, Button, Alert, TextInput, FlatList, TouchableHighlight } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
-
+import PersonalDetails from '../PersonalDetails';
 import PostModel, { Post } from '../../model/PostModel';
 
 const ListItem: FC<{ _id?: string, text: string, userId?: string,imageUrl: string, onRowSelected: (_id: String) => void }> =
@@ -31,7 +31,7 @@ const ListItem: FC<{ _id?: string, text: string, userId?: string,imageUrl: strin
 const PostList: FC<{ route: any, navigation: any }> = ({ route, navigation }) => {
     const onRowSelected = (id: String) => {
         console.log("in the list: row was selected " + id)
-        navigation.navigate('StudentDetails', { studentId: id })
+        //navigation.navigate('PersonalDetails', { userId: id })
     }
 
     const [posts, setPosts] = useState<Array<Post>>();

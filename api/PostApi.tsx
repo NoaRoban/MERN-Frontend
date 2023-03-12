@@ -16,17 +16,22 @@ const addNewPost = async (postJson: any) => {
     return apiClient.post("/post", postJson);
 };
 
+const getAllPostByUserId = async (userId: any) => {
+    return apiClient.post("/post",userId );
+};
+
 const editPost = async (postId: string, editedPost: iEditPost) => {
     return apiClient.put(`/${post}/${postId}`, editedPost);
 }
 const uploadImage = async (image: any) => {
     return apiClient.post("/file/file", image);
-  };
+};
 
 export default {
     getAllPosts,
     getPostById,
     addNewPost,
     editPost,
+    getAllPostByUserId,
     uploadImage,
 };

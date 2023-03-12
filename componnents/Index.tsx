@@ -11,9 +11,9 @@ import AppLoading from 'expo-app-loading'
 const NavigationIndex = () => {
    
     const { userInfo } = useContext(AuthContext);
-    console.log('user id: '+ userInfo.id)
-    console.log('user access token: '+ userInfo.accessToken)
-    console.log('user refresh token: '+ userInfo.refreshToken)
+    //console.log('user id: '+ userInfo.id)
+    //console.log('user access token: '+ userInfo.accessToken)
+    //console.log('user refresh token: '+ userInfo.refreshToken)
 
     return userInfo.refreshToken? <AuthNavigation/> : <UnAuthNavContainer />
 }
